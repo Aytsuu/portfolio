@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolvePublicAssetDir } from "./resolve-public-asset-dir";
 
 export interface Project {
   slug: string;
@@ -17,11 +17,7 @@ interface ProjectMetaFile {
   cover?: string;
 }
 
-const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-const assetsProjectsRoot = path.join(
-  moduleDir,
-  "../../public/assets/projects",
-);
+const assetsProjectsRoot = resolvePublicAssetDir("assets", "projects");
 
 const assetUrl = (slug: string, fileName: string) =>
   `/assets/projects/${slug}/${fileName}`;

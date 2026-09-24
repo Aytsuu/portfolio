@@ -1,14 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolvePublicAssetDir } from "./resolve-public-asset-dir";
 
 export interface CertificateImage {
   src: string;
   alt: string;
 }
 
-const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-const certificatesDir = path.join(moduleDir, "../../public/assets/certificates");
+const certificatesDir = resolvePublicAssetDir("assets", "certificates");
 
 const toAlt = (fileName: string) =>
   fileName.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
