@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { BlurBackdrop } from "@/components/blur-backdrop";
-import type { CertificateImage } from "@/lib/load-certificate-images";
-import type { GalleryImage } from "@/lib/load-gallery";
+import type { CertificateImage, GalleryImage } from "@/types/public-assets";
 import { ExperienceReceipt } from "@/components/experience-receipt";
 
 interface BackdropImage {

@@ -1,0 +1,188 @@
+{
+  "projects": [
+    {
+      "slug": "ciudad",
+      "name": "Barangay San Roque (Ciudad)",
+      "description": "Official online home for the barangay—programs, services, and community updates in one place for residents and staff.",
+      "link": "https://sanroqueciudad.com",
+      "cover": "/assets/projects/ciudad/1.png"
+    },
+    {
+      "slug": "jehmarp",
+      "name": "Jehmarp",
+      "description": "End-to-end shop operations for a meat and poultry business—orders, customers, payments, invoices, and reseller commissions in one auditable flow.",
+      "link": "https://jehmarp.paoloaraneta.dev",
+      "cover": "/assets/projects/jehmarp/1.png"
+    },
+    {
+      "slug": "loopharvest",
+      "name": "LoopHarvest",
+      "description": "Neighborhood marketplace for surplus food so good meals reach people instead of landfills and communities stay connected.",
+      "cover": "/assets/projects/loopharvest/1.png"
+    },
+    {
+      "slug": "meiro",
+      "name": "Meiro",
+      "description": "A shifting maze horror game where you outrun relentless pursuers through corridors that change as you play.",
+      "link": "https://meiro-1612b.web.app",
+      "cover": "/assets/projects/meiro/1.png"
+    },
+    {
+      "slug": "orca",
+      "name": "Orca",
+      "description": "Turns team conversations into clear project plans so goals, tasks, and next steps stay visible from kickoff to delivery.",
+      "cover": "/assets/projects/orca/1.png"
+    },
+    {
+      "slug": "securado",
+      "name": "Securado",
+      "description": "Real-time tracking for people and assets you care about, with dependable visibility when safety matters.",
+      "link": "https://securado.onrender.com",
+      "cover": "/assets/projects/securado/1.png"
+    }
+  ],
+  "gallery": [
+    {
+      "src": "/assets/gallery/11e57192-7677-4ede-bf62-7cc5ea8cea4c.jpg",
+      "alt": "11e57192 7677 4ede bf62 7cc5ea8cea4c"
+    },
+    {
+      "src": "/assets/gallery/3e2ec31b-8825-43c6-97be-29bfb0efc6cf.jpg",
+      "alt": "3e2ec31b 8825 43c6 97be 29bfb0efc6cf"
+    },
+    {
+      "src": "/assets/gallery/40f4c31b-f23c-4c7e-a6fe-88c21aeb668f.jpg",
+      "alt": "40f4c31b f23c 4c7e a6fe 88c21aeb668f"
+    },
+    {
+      "src": "/assets/gallery/63bdcf16-b98a-4476-8f6f-0ec74b37e79c.jpg",
+      "alt": "63bdcf16 b98a 4476 8f6f 0ec74b37e79c"
+    },
+    {
+      "src": "/assets/gallery/729973397_4529420740679032_3174102527834798708_n.jpg",
+      "alt": "729973397 4529420740679032 3174102527834798708 n"
+    },
+    {
+      "src": "/assets/gallery/730463769_943801808708695_9079131052986261193_n.jpg",
+      "alt": "730463769 943801808708695 9079131052986261193 n"
+    },
+    {
+      "src": "/assets/gallery/731422464_1836800273967775_5987275705946549944_n.jpg",
+      "alt": "731422464 1836800273967775 5987275705946549944 n"
+    },
+    {
+      "src": "/assets/gallery/734355252_993460793562035_3067035228599457328_n.jpg",
+      "alt": "734355252 993460793562035 3067035228599457328 n"
+    },
+    {
+      "src": "/assets/gallery/734528315_1489665435820994_440861259961437977_n.jpg",
+      "alt": "734528315 1489665435820994 440861259961437977 n"
+    },
+    {
+      "src": "/assets/gallery/735257260_1490867515661206_1900160557112871721_n.jpg",
+      "alt": "735257260 1490867515661206 1900160557112871721 n"
+    },
+    {
+      "src": "/assets/gallery/957ee793-7386-47c3-9409-6e98792e3acb.jpg",
+      "alt": "957ee793 7386 47c3 9409 6e98792e3acb"
+    },
+    {
+      "src": "/assets/gallery/a2de0fc7-13fe-40db-9cfa-378139d3f742.jpg",
+      "alt": "a2de0fc7 13fe 40db 9cfa 378139d3f742"
+    },
+    {
+      "src": "/assets/gallery/d68e2472-9ee3-465c-8922-6627e3a6a5f4.jpg",
+      "alt": "d68e2472 9ee3 465c 8922 6627e3a6a5f4"
+    },
+    {
+      "src": "/assets/gallery/eb1c3c4d-1266-4eca-a880-840627383a2b.jpg",
+      "alt": "eb1c3c4d 1266 4eca a880 840627383a2b"
+    },
+    {
+      "src": "/assets/gallery/f5200c6c-54b2-49c0-843f-c24156773de5.jpg",
+      "alt": "f5200c6c 54b2 49c0 843f c24156773de5"
+    },
+    {
+      "src": "/assets/gallery/image-3.jpg",
+      "alt": "image 3"
+    },
+    {
+      "src": "/assets/gallery/image-4.jpg",
+      "alt": "image 4"
+    },
+    {
+      "src": "/assets/gallery/image-5.jpg",
+      "alt": "image 5"
+    },
+    {
+      "src": "/assets/gallery/image-6.jpg",
+      "alt": "image 6"
+    }
+  ],
+  "certificates": [
+    {
+      "src": "/assets/certificates/2024%20NASA%20Space%20Apps%20Challenge.png",
+      "alt": "2024 NASA Space Apps Challenge"
+    },
+    {
+      "src": "/assets/certificates/2025%20NASA%20Space%20Apps%20Challenge.png",
+      "alt": "2025 NASA Space Apps Challenge"
+    },
+    {
+      "src": "/assets/certificates/AI%20READY%20ASEAN.png",
+      "alt": "AI READY ASEAN"
+    },
+    {
+      "src": "/assets/certificates/ASEAN%20AI%20-%20Mapua%20Malayan%20Colleges%20Laguna.png",
+      "alt": "ASEAN AI   Mapua Malayan Colleges Laguna"
+    },
+    {
+      "src": "/assets/certificates/ASEAN%20AI%20Hackathon%202026.png",
+      "alt": "ASEAN AI Hackathon 2026"
+    },
+    {
+      "src": "/assets/certificates/AWS%20AI%20Practitioner%20Challenge.png",
+      "alt": "AWS AI Practitioner Challenge"
+    },
+    {
+      "src": "/assets/certificates/Build%20with%20AI%20Cebu%202026.png",
+      "alt": "Build with AI Cebu 2026"
+    },
+    {
+      "src": "/assets/certificates/Data%20Analytics%20Fundamentals.png",
+      "alt": "Data Analytics Fundamentals"
+    },
+    {
+      "src": "/assets/certificates/Devfest%20Cebu%202025.png",
+      "alt": "Devfest Cebu 2025"
+    },
+    {
+      "src": "/assets/certificates/Exploring%20Career%20Paths%20in%20AI%20Space.png",
+      "alt": "Exploring Career Paths in AI Space"
+    },
+    {
+      "src": "/assets/certificates/Google%20AI%20Professional.png",
+      "alt": "Google AI Professional"
+    },
+    {
+      "src": "/assets/certificates/IBM%20Dev%20Day%20Bob%20Edition.png",
+      "alt": "IBM Dev Day Bob Edition"
+    },
+    {
+      "src": "/assets/certificates/Logistics%20Automation%20Challenge.jpg",
+      "alt": "Logistics Automation Challenge"
+    },
+    {
+      "src": "/assets/certificates/OJT%20Certificate%20of%20Completion.png",
+      "alt": "OJT Certificate of Completion"
+    },
+    {
+      "src": "/assets/certificates/Reply%20AI%20Agent%20Challenge.png",
+      "alt": "Reply AI Agent Challenge"
+    },
+    {
+      "src": "/assets/certificates/USAII%20Finalist.png",
+      "alt": "USAII Finalist"
+    }
+  ]
+}

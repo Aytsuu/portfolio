@@ -4,10 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
+    "sync-assets": "node scripts/sync-public-assets.mjs",
+    "dev": "npm run sync-assets && astro dev",
+    "start": "npm run sync-assets && astro dev",
+    "prebuild": "npm run sync-assets",
     "build": "astro build",
     "preview": "astro preview",
+    "precheck": "npm run sync-assets",
     "check": "astro check"
   },
   "dependencies": {
