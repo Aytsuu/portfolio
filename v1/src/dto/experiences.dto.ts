@@ -5,6 +5,7 @@ interface props {
   location?: string
   highlights?: string[]
   skills?: string[]
+  category?: 'education' | 'work'
 }
 
 export const experiences: props[] = [
@@ -27,12 +28,14 @@ export const experiences: props[] = [
     experiencedAt: 'Barangay San Roque (Ciudad)',
     year: 'Aug 2026 - Oct 2025',
     location: 'Cebu, Philippines',
+    category: 'education',
     skills: []
   },
   {
     title: 'BS Information Technology',
     experiencedAt: 'Cebu Technological Univeristy - Main Campus',
     year: 'Aug 2022 - Jul 2026',
-    location: 'Cebu, Philippines'
+    location: 'Cebu, Philippines',
+    category: 'education'
   }
 ]
