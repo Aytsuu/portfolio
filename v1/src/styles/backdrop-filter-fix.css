@@ -1,0 +1,19 @@
+/**
+ * Standard backdrop-filter (Tailwind v4 build may drop unprefixed copies in @layer).
+ * Variables are defined in global.css :root.
+ */
+.floating-nav {
+  backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturate-nav));
+}
+
+.works-carousel-grip-ring {
+  backdrop-filter: blur(var(--glass-blur-grip)) saturate(var(--glass-saturate-grip));
+}
+
+.blur-backdrop--visible .blur-backdrop-scrim {
+  backdrop-filter: blur(var(--glass-blur-scrim)) saturate(var(--glass-saturate-scrim));
+}
+
+.blur-backdrop-panel {
+  backdrop-filter: blur(var(--glass-blur-panel)) saturate(var(--glass-saturate-panel));
+}

@@ -206,6 +206,18 @@
 }
 
 @layer components {
+  /* Tailwind v4 build mangles literal blur(0px) in backdrop-filter; use vars + none. */
+  :root {
+    --glass-blur-grip: 14px;
+    --glass-blur-nav: 16px;
+    --glass-blur-scrim: 14px;
+    --glass-blur-panel: 20px;
+    --glass-saturate-grip: 1.35;
+    --glass-saturate-nav: 1.4;
+    --glass-saturate-scrim: 1.2;
+    --glass-saturate-panel: 1.35;
+  }
+
   .site {
     @apply flex min-h-screen flex-col items-stretch justify-center overflow-x-hidden px-6 pt-16 pb-6 sm:px-8 sm:pt-20 sm:pb-8;
   }
@@ -306,8 +318,9 @@
     height: 2.75rem;
     border: 1px solid rgb(255 255 255 / 0.28);
     background-color: rgb(255 255 255 / 0.2);
-    backdrop-filter: blur(14px) saturate(1.35);
-    -webkit-backdrop-filter: blur(14px) saturate(1.35);
+    backdrop-filter: blur(var(--glass-blur-grip)) saturate(var(--glass-saturate-grip));
+    -webkit-backdrop-filter: blur(var(--glass-blur-grip))
+      saturate(var(--glass-saturate-grip));
     box-shadow: 0 4px 18px rgb(0 0 0 / 0.04);
     transform: translate(-50%, -50%);
     transition:
@@ -470,8 +483,9 @@
     border: 1px solid transparent;
     background-color: rgb(255 255 255 / 0.12);
     box-shadow: none;
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturate-nav));
+    -webkit-backdrop-filter: blur(var(--glass-blur-nav))
+      saturate(var(--glass-saturate-nav));
     transition:
       background-color 0.22s ease,
       border-color 0.22s ease,
@@ -525,19 +539,18 @@
   .blur-backdrop-scrim {
     @apply fixed inset-0 z-0 cursor-default border-0 p-0;
     background-color: rgb(15 15 15 / 0.25);
-    backdrop-filter: blur(0px) saturate(1);
-    -webkit-backdrop-filter: blur(0px) saturate(1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     opacity: 0;
-    transition:
-      opacity 0.32s ease,
-      backdrop-filter 0.32s ease,
-      -webkit-backdrop-filter 0.32s ease;
+    transition: opacity 0.32s ease;
   }
 
   .blur-backdrop--visible .blur-backdrop-scrim {
     opacity: 1;
-    backdrop-filter: blur(14px) saturate(1.2);
-    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(var(--glass-blur-scrim))
+      saturate(var(--glass-saturate-scrim));
+    -webkit-backdrop-filter: blur(var(--glass-blur-scrim))
+      saturate(var(--glass-saturate-scrim));
   }
 
   .blur-backdrop-scroll {
@@ -598,8 +611,10 @@
   .blur-backdrop-panel {
     @apply relative z-[1] my-4 flex w-full max-w-5xl flex-col overflow-visible rounded-2xl border border-white/40 shadow-[0_24px_80px_rgb(0_0_0_0.18)] sm:my-8;
     background-color: rgb(255 255 255 / 0.72);
-    backdrop-filter: blur(20px) saturate(1.35);
-    -webkit-backdrop-filter: blur(20px) saturate(1.35);
+    backdrop-filter: blur(var(--glass-blur-panel))
+      saturate(var(--glass-saturate-panel));
+    -webkit-backdrop-filter: blur(var(--glass-blur-panel))
+      saturate(var(--glass-saturate-panel));
     opacity: 0;
     transform: translateY(14px) scale(0.98);
     transition:
