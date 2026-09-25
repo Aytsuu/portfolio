@@ -420,7 +420,7 @@
   }
 
   .works-carousel-media {
-    @apply aspect-[16/10] cursor-grab overflow-hidden rounded-xl;
+    @apply aspect-[16/10] cursor-grab overflow-hidden rounded-xl bg-canvas;
     transition: box-shadow 0.5s ease;
   }
 

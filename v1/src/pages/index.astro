@@ -25,6 +25,13 @@ const certificateImages = loadCertificateImages();
   title={site.name}
   description={site.tagline}
 >
+  <Fragment slot="head">
+    {
+      projects.map((project) => (
+        <link rel="preload" as="image" href={project.cover} />
+      ))
+    }
+  </Fragment>
   <div class="site">
     <main class="site-main">
       <header class="intro">

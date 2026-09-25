@@ -22,6 +22,7 @@ const {
     <meta name="description" content={description} />
     <link rel="icon" type="image/png" href="/assets/my_profile_pic.png" />
     <title>{title}</title>
+    <slot name="head" />
   </head>
   <body class="bg-canvas text-primary font-sans antialiased">
     <slot />

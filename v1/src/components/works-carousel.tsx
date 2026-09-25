@@ -68,8 +68,9 @@ function ProjectSlide({
         <img
           src={project.cover}
           alt={isActive ? project.name : ""}
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchPriority={isActive ? "high" : "auto"}
           draggable={false}
         />
       </div>
@@ -138,6 +139,13 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
   const activeIndexRef = useRef(activeIndex);
 
   activeIndexRef.current = activeIndex;
+
+  useEffect(() => {
+    for (const project of projects) {
+      const preload = new Image();
+      preload.src = project.cover;
+    }
+  }, [projects]);
 
   const goTo = useCallback(
     (index: number) => {
