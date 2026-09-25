@@ -2,6 +2,7 @@ import {
   useCallback,
   useRef,
   useState,
+  type DragEvent,
   type MouseEvent,
   type PointerEvent,
 } from "react";
@@ -42,6 +43,10 @@ function ProjectSlide({
     }
   };
 
+  const blockNativeDrag = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault();
+  };
+
   const body = (
     <>
       <div className="works-carousel-media">
@@ -72,6 +77,7 @@ function ProjectSlide({
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleClick}
+        onDragStart={blockNativeDrag}
         aria-hidden={!isActive}
         tabIndex={isActive ? 0 : -1}
         draggable={false}
@@ -85,6 +91,7 @@ function ProjectSlide({
     <article
       className={className}
       onClick={handleClick}
+      onDragStart={blockNativeDrag}
       aria-hidden={!isActive}
       tabIndex={isActive ? 0 : -1}
     >
@@ -107,8 +114,13 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
   const [gripCursor, setGripCursor] = useState({ x: 0, y: 0 });
 
   const dragStartXRef = useRef(0);
+  const dragStartYRef = useRef(0);
   const suppressClickRef = useRef(false);
   const isDraggingRef = useRef(false);
+  const horizontalDragRef = useRef(false);
+  const activeIndexRef = useRef(activeIndex);
+
+  activeIndexRef.current = activeIndex;
 
   const goTo = useCallback(
     (index: number) => {
@@ -133,9 +145,14 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     }
 
     dragStartXRef.current = event.clientX;
+    dragStartYRef.current = event.clientY;
+    horizontalDragRef.current = false;
     isDraggingRef.current = true;
     setIsDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
+
+    if (event.currentTarget.setPointerCapture) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
   };
 
   const updateGripCursor = (event: PointerEvent<HTMLDivElement>) => {
@@ -173,11 +190,26 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
       return;
     }
 
-    const delta = event.clientX - dragStartXRef.current;
-    if (Math.abs(delta) > 6) {
+    const deltaX = event.clientX - dragStartXRef.current;
+    const deltaY = event.clientY - dragStartYRef.current;
+
+    if (
+      !horizontalDragRef.current &&
+      Math.abs(deltaX) > 8 &&
+      Math.abs(deltaX) > Math.abs(deltaY)
+    ) {
+      horizontalDragRef.current = true;
+    }
+
+    if (horizontalDragRef.current && event.pointerType === "touch") {
+      event.preventDefault();
+    }
+
+    if (Math.abs(deltaX) > 6) {
       suppressClickRef.current = true;
     }
-    setDragOffsetPx(delta);
+
+    setDragOffsetPx(deltaX);
   };
 
   const finishDrag = (event: PointerEvent<HTMLDivElement>) => {
@@ -186,6 +218,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     }
 
     isDraggingRef.current = false;
+    horizontalDragRef.current = false;
     setIsDragging(false);
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -193,12 +226,14 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     }
 
     const delta = event.clientX - dragStartXRef.current;
+    const index = activeIndexRef.current;
+
     if (Math.abs(delta) > DRAG_THRESHOLD_PX) {
       suppressClickRef.current = true;
       if (delta < 0) {
-        goTo(activeIndex + 1);
+        goTo(index + 1);
       } else {
-        goTo(activeIndex - 1);
+        goTo(index - 1);
       }
     }
 
@@ -242,10 +277,11 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
         className={`works-carousel-viewport${isDragging ? " is-dragging" : ""}${gripCursorVisible ? " is-grip-cursor" : ""}`}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={finishDrag}
-        onPointerCancel={finishDrag}
+        onPointerDownCapture={handlePointerDown}
+        onPointerMoveCapture={handlePointerMove}
+        onPointerUpCapture={finishDrag}
+        onPointerCancelCapture={finishDrag}
+        onLostPointerCaptureCapture={finishDrag}
       >
         <div
           className={`works-carousel-track${isDragging ? " is-dragging" : ""}`}
