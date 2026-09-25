@@ -1,8 +1,11 @@
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type DragEvent,
+  type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
 } from "react";
@@ -10,7 +13,8 @@ import type { Project } from "../lib/load-projects";
 
 const SLIDE_WIDTH_VW = 80;
 const PEEK_VW = 10;
-const DRAG_THRESHOLD_PX = 48;
+const DRAG_THRESHOLD_PX = 40;
+const DRAG_AXIS_LOCK_PX = 10;
 
 interface WorksCarouselProps {
   projects: Project[];
@@ -32,13 +36,24 @@ function ProjectSlide({
   shouldSuppressClick,
 }: SlideProps) {
   const isActive = position === "active";
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
+
+  const handleActivate = (event: MouseEvent<HTMLElement>) => {
     if (shouldSuppressClick()) {
       event.preventDefault();
       return;
     }
     if (!isActive) {
       event.preventDefault();
+      onSelect();
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+    event.preventDefault();
+    if (!isActive) {
       onSelect();
     }
   };
@@ -69,17 +84,15 @@ function ProjectSlide({
 
   const className = `works-carousel-slide is-${position}`;
 
-  if (project.link) {
+  if (isActive && project.link) {
     return (
       <a
         href={project.link}
         className={className}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={handleClick}
+        onClick={handleActivate}
         onDragStart={blockNativeDrag}
-        aria-hidden={!isActive}
-        tabIndex={isActive ? 0 : -1}
         draggable={false}
       >
         {body}
@@ -88,15 +101,18 @@ function ProjectSlide({
   }
 
   return (
-    <article
+    <div
       className={className}
-      onClick={handleClick}
-      onDragStart={blockNativeDrag}
-      aria-hidden={!isActive}
+      role="button"
       tabIndex={isActive ? 0 : -1}
+      aria-hidden={!isActive}
+      aria-label={isActive ? undefined : `Show ${project.name}`}
+      onClick={handleActivate}
+      onKeyDown={handleKeyDown}
+      onDragStart={blockNativeDrag}
     >
       {body}
-    </article>
+    </div>
   );
 }
 
@@ -113,6 +129,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
   const [gripCursorVisible, setGripCursorVisible] = useState(false);
   const [gripCursor, setGripCursor] = useState({ x: 0, y: 0 });
 
+  const viewportRef = useRef<HTMLDivElement>(null);
   const dragStartXRef = useRef(0);
   const dragStartYRef = useRef(0);
   const suppressClickRef = useRef(false);
@@ -125,7 +142,8 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
   const goTo = useCallback(
     (index: number) => {
       if (projects.length === 0) return;
-      const next = ((index % projects.length) + projects.length) % projects.length;
+      const next =
+        ((index % projects.length) + projects.length) % projects.length;
       setActiveIndex(next);
     },
     [projects.length],
@@ -139,8 +157,113 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     return true;
   }, []);
 
+  const endDrag = useCallback(
+    (clientX: number) => {
+      if (!isDraggingRef.current) {
+        return;
+      }
+
+      isDraggingRef.current = false;
+      horizontalDragRef.current = false;
+      setIsDragging(false);
+
+      const delta = clientX - dragStartXRef.current;
+      const index = activeIndexRef.current;
+
+      if (Math.abs(delta) > DRAG_THRESHOLD_PX) {
+        suppressClickRef.current = true;
+        goTo(delta < 0 ? index + 1 : index - 1);
+      }
+
+      setDragOffsetPx(0);
+    },
+    [goTo],
+  );
+
+  const updateDrag = useCallback((clientX: number, clientY: number) => {
+    const deltaX = clientX - dragStartXRef.current;
+    const deltaY = clientY - dragStartYRef.current;
+
+    if (
+      !horizontalDragRef.current &&
+      Math.abs(deltaX) > DRAG_AXIS_LOCK_PX &&
+      Math.abs(deltaX) > Math.abs(deltaY)
+    ) {
+      horizontalDragRef.current = true;
+    }
+
+    if (Math.abs(deltaX) > 6) {
+      suppressClickRef.current = true;
+    }
+
+    setDragOffsetPx(deltaX);
+  }, []);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      return;
+    }
+
+    const onTouchStart = (event: TouchEvent) => {
+      if (event.touches.length !== 1) {
+        return;
+      }
+
+      const touch = event.touches[0];
+      dragStartXRef.current = touch.clientX;
+      dragStartYRef.current = touch.clientY;
+      horizontalDragRef.current = false;
+      isDraggingRef.current = true;
+      setIsDragging(true);
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (!isDraggingRef.current || event.touches.length !== 1) {
+        return;
+      }
+
+      event.preventDefault();
+      const touch = event.touches[0];
+      updateDrag(touch.clientX, touch.clientY);
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      const touch = event.changedTouches[0];
+      endDrag(touch?.clientX ?? dragStartXRef.current);
+    };
+
+    viewport.addEventListener("touchstart", onTouchStart, {
+      capture: true,
+      passive: true,
+    });
+    viewport.addEventListener("touchmove", onTouchMove, {
+      capture: true,
+      passive: false,
+    });
+    viewport.addEventListener("touchend", onTouchEnd, {
+      capture: true,
+      passive: true,
+    });
+    viewport.addEventListener("touchcancel", onTouchEnd, {
+      capture: true,
+      passive: true,
+    });
+
+    return () => {
+      viewport.removeEventListener("touchstart", onTouchStart, {
+        capture: true,
+      });
+      viewport.removeEventListener("touchmove", onTouchMove, { capture: true });
+      viewport.removeEventListener("touchend", onTouchEnd, { capture: true });
+      viewport.removeEventListener("touchcancel", onTouchEnd, {
+        capture: true,
+      });
+    };
+  }, [endDrag, updateDrag]);
+
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "mouse" && event.button !== 0) {
+    if (event.pointerType !== "mouse" || event.button !== 0) {
       return;
     }
 
@@ -149,10 +272,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     horizontalDragRef.current = false;
     isDraggingRef.current = true;
     setIsDragging(true);
-
-    if (event.currentTarget.setPointerCapture) {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    }
+    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const updateGripCursor = (event: PointerEvent<HTMLDivElement>) => {
@@ -178,66 +298,31 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     }
 
     setGripCursorVisible(false);
-    isDraggingRef.current = false;
-    setIsDragging(false);
-    setDragOffsetPx(0);
+    if (isDraggingRef.current) {
+      endDrag(event.clientX);
+    }
   };
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     updateGripCursor(event);
 
-    if (!isDraggingRef.current) {
+    if (!isDraggingRef.current || event.pointerType !== "mouse") {
       return;
     }
 
-    const deltaX = event.clientX - dragStartXRef.current;
-    const deltaY = event.clientY - dragStartYRef.current;
-
-    if (
-      !horizontalDragRef.current &&
-      Math.abs(deltaX) > 8 &&
-      Math.abs(deltaX) > Math.abs(deltaY)
-    ) {
-      horizontalDragRef.current = true;
-    }
-
-    if (horizontalDragRef.current && event.pointerType === "touch") {
-      event.preventDefault();
-    }
-
-    if (Math.abs(deltaX) > 6) {
-      suppressClickRef.current = true;
-    }
-
-    setDragOffsetPx(deltaX);
+    updateDrag(event.clientX, event.clientY);
   };
 
-  const finishDrag = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current) {
+  const finishPointerDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse" || !isDraggingRef.current) {
       return;
     }
-
-    isDraggingRef.current = false;
-    horizontalDragRef.current = false;
-    setIsDragging(false);
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
 
-    const delta = event.clientX - dragStartXRef.current;
-    const index = activeIndexRef.current;
-
-    if (Math.abs(delta) > DRAG_THRESHOLD_PX) {
-      suppressClickRef.current = true;
-      if (delta < 0) {
-        goTo(index + 1);
-      } else {
-        goTo(index - 1);
-      }
-    }
-
-    setDragOffsetPx(0);
+    endDrag(event.clientX);
   };
 
   if (projects.length === 0) {
@@ -260,7 +345,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
       style={
         {
           "--carousel-peek": `${PEEK_VW}vw`,
-        } as React.CSSProperties
+        } as CSSProperties
       }
       aria-roledescription="carousel"
       aria-label="Projects"
@@ -274,14 +359,14 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
       ) : null}
 
       <div
+        ref={viewportRef}
         className={`works-carousel-viewport${isDragging ? " is-dragging" : ""}${gripCursorVisible ? " is-grip-cursor" : ""}`}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        onPointerDownCapture={handlePointerDown}
-        onPointerMoveCapture={handlePointerMove}
-        onPointerUpCapture={finishDrag}
-        onPointerCancelCapture={finishDrag}
-        onLostPointerCaptureCapture={finishDrag}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishPointerDrag}
+        onPointerCancel={finishPointerDrag}
       >
         <div
           className={`works-carousel-track${isDragging ? " is-dragging" : ""}`}

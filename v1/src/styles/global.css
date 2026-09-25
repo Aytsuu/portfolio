@@ -353,6 +353,7 @@
   .works-carousel-viewport {
     @apply w-full cursor-grab overflow-hidden select-none;
     touch-action: none;
+    overscroll-behavior: none;
     -webkit-user-select: none;
     user-select: none;
     perspective: 1400px;
@@ -425,6 +426,7 @@
 
   .works-carousel-media img {
     @apply size-full cursor-grab object-cover;
+    pointer-events: none;
     -webkit-user-drag: none;
     user-select: none;
   }
