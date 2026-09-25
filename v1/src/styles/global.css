@@ -352,8 +352,7 @@
 
   .works-carousel-viewport {
     @apply w-full cursor-grab overflow-hidden select-none;
-    touch-action: none;
-    overscroll-behavior: none;
+    touch-action: pan-y;
     -webkit-user-select: none;
     user-select: none;
     perspective: 1400px;
@@ -384,7 +383,7 @@
 
   .works-carousel-slide {
     @apply relative z-0 grid shrink-0 cursor-grab gap-4 px-2 text-left no-underline;
-    touch-action: none;
+    touch-action: pan-y;
     -webkit-touch-callout: none;
     flex: 0 0 80vw;
     opacity: 0.42;

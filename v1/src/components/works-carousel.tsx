@@ -171,6 +171,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
         return;
       }
 
+      const wasHorizontal = horizontalDragRef.current;
       isDraggingRef.current = false;
       horizontalDragRef.current = false;
       setIsDragging(false);
@@ -178,7 +179,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
       const delta = clientX - dragStartXRef.current;
       const index = activeIndexRef.current;
 
-      if (Math.abs(delta) > DRAG_THRESHOLD_PX) {
+      if (wasHorizontal && Math.abs(delta) > DRAG_THRESHOLD_PX) {
         suppressClickRef.current = true;
         goTo(delta < 0 ? index + 1 : index - 1);
       }
@@ -188,23 +189,28 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     [goTo],
   );
 
-  const updateDrag = useCallback((clientX: number, clientY: number) => {
+  const lockAxis = useCallback((clientX: number, clientY: number) => {
+    if (horizontalDragRef.current) {
+      return "horizontal";
+    }
+
     const deltaX = clientX - dragStartXRef.current;
     const deltaY = clientY - dragStartYRef.current;
 
-    if (
-      !horizontalDragRef.current &&
-      Math.abs(deltaX) > DRAG_AXIS_LOCK_PX &&
-      Math.abs(deltaX) > Math.abs(deltaY)
-    ) {
+    if (Math.abs(deltaX) < DRAG_AXIS_LOCK_PX && Math.abs(deltaY) < DRAG_AXIS_LOCK_PX) {
+      return "undecided";
+    }
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
       horizontalDragRef.current = true;
-    }
-
-    if (Math.abs(deltaX) > 6) {
       suppressClickRef.current = true;
+      return "horizontal";
     }
 
-    setDragOffsetPx(deltaX);
+    isDraggingRef.current = false;
+    setIsDragging(false);
+    setDragOffsetPx(0);
+    return "vertical";
   }, []);
 
   useEffect(() => {
@@ -223,7 +229,6 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
       dragStartYRef.current = touch.clientY;
       horizontalDragRef.current = false;
       isDraggingRef.current = true;
-      setIsDragging(true);
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -231,12 +236,23 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
         return;
       }
 
-      event.preventDefault();
       const touch = event.touches[0];
-      updateDrag(touch.clientX, touch.clientY);
+      const axis = lockAxis(touch.clientX, touch.clientY);
+
+      if (axis !== "horizontal") {
+        return;
+      }
+
+      event.preventDefault();
+      setIsDragging(true);
+      setDragOffsetPx(touch.clientX - dragStartXRef.current);
     };
 
     const onTouchEnd = (event: TouchEvent) => {
+      if (!isDraggingRef.current && !horizontalDragRef.current) {
+        return;
+      }
+
       const touch = event.changedTouches[0];
       endDrag(touch?.clientX ?? dragStartXRef.current);
     };
@@ -268,7 +284,7 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
         capture: true,
       });
     };
-  }, [endDrag, updateDrag]);
+  }, [endDrag, lockAxis]);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== "mouse" || event.button !== 0) {
@@ -279,8 +295,6 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
     dragStartYRef.current = event.clientY;
     horizontalDragRef.current = false;
     isDraggingRef.current = true;
-    setIsDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const updateGripCursor = (event: PointerEvent<HTMLDivElement>) => {
@@ -318,11 +332,21 @@ export function WorksCarousel({ projects }: WorksCarouselProps) {
       return;
     }
 
-    updateDrag(event.clientX, event.clientY);
+    const axis = lockAxis(event.clientX, event.clientY);
+    if (axis !== "horizontal") {
+      return;
+    }
+
+    if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    setIsDragging(true);
+    setDragOffsetPx(event.clientX - dragStartXRef.current);
   };
 
   const finishPointerDrag = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "mouse" || !isDraggingRef.current) {
+    if (event.pointerType !== "mouse") {
       return;
     }
 
