@@ -109,15 +109,35 @@ const loadCertificateImages = () => {
     }));
 };
 
+const loadProfileImage = () => {
+  const candidates = [
+    "my_profile_pic.png",
+    "my_profile_pic.jpg",
+    "my_profile_pic.webp",
+    "profile.png",
+    "profile.jpg",
+    "favicon.png",
+  ];
+
+  for (const fileName of candidates) {
+    if (fs.existsSync(path.join(publicRoot, "assets", fileName))) {
+      return `/assets/${fileName}`;
+    }
+  }
+
+  return null;
+};
+
 const manifest = {
   projects: loadProjects(),
   gallery: loadGalleryImages(),
   certificates: loadCertificateImages(),
+  profile: loadProfileImage(),
 };
 
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(outFile, `${JSON.stringify(manifest, null, 2)}\n`, "utf-8");
 
 console.log(
-  `sync-public-assets: ${manifest.projects.length} projects, ${manifest.gallery.length} gallery, ${manifest.certificates.length} certificates`,
+  `sync-public-assets: ${manifest.projects.length} projects, ${manifest.gallery.length} gallery, ${manifest.certificates.length} certificates, profile ${manifest.profile ?? "missing"}`,
 );

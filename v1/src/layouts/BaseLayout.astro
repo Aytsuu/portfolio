@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import "../styles/backdrop-filter-fix.css";
+import profileAsset from "../assets/my_profile_pic.png";
+import { getPublicAssetsManifest } from "../lib/public-assets-manifest";
 
 interface Props {
   title?: string;
@@ -12,6 +14,10 @@ const {
   description =
     "Full-stack software engineer based in Cebu, focused on practical web systems, automation workflows, and AI-assisted product development.",
 } = Astro.props;
+
+const bundledProfile =
+  typeof profileAsset === "string" ? profileAsset : profileAsset.src;
+const faviconHref = bundledProfile || getPublicAssetsManifest().profile || "/assets/my_profile_pic.png";
 ---
 
 <!doctype html>
@@ -20,7 +26,8 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" type="image/png" href="/assets/my_profile_pic.png" />
+    <link rel="icon" type="image/png" href={faviconHref} />
+    <link rel="apple-touch-icon" href={faviconHref} />
     <title>{title}</title>
     <slot name="head" />
   </head>

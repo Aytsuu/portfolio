@@ -20,4 +20,5 @@ export interface PublicAssetsManifest {
   projects: Project[];
   gallery: GalleryImage[];
   certificates: CertificateImage[];
+  profile: string | null;
 }
